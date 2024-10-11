@@ -1,0 +1,78 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 220 20% 10%; /* hsl(220, 20%, 10%) */
+    --foreground: 45 100% 96%; /* hsl(45, 100%, 96%) */
+    --card: 220 20% 13%; /* hsl(220, 20%, 13%) */
+    --card-foreground: 45 100% 96%; /* hsl(45, 100%, 96%) */
+    --popover: 220 20% 13%; /* hsl(220, 20%, 13%) */
+    --popover-foreground: 45 100% 96%; /* hsl(45, 100%, 96%) */
+    --primary: 45 100% 50%; /* hsl(45, 100%, 50%) */
+    --primary-foreground: 220 20% 10%; /* hsl(220, 20%, 10%) */
+    --secondary: 220 20% 16%; /* hsl(220, 20%, 16%) */
+    --secondary-foreground: 45 100% 96%; /* hsl(45, 100%, 96%) */
+    --muted: 220 20% 16%; /* hsl(220, 20%, 16%) */
+    --muted-foreground: 45 20% 65%; /* hsl(45, 20%, 65%) */
+    --accent: 45 80% 40%; /* hsl(45, 80%, 40%) */
+    --accent-foreground: 220 20% 10%; /* hsl(220, 20%, 10%) */
+    --destructive: 0 82.8% 50.6%; /* hsl(0, 82.8%, 50.6%) */
+    --destructive-foreground: 45 100% 96%; /* hsl(45, 100%, 96%) */
+    --border: 220 20% 20%; /* hsl(220, 20%, 20%) */
+    --input: 220 20% 16%; /* hsl(220, 20%, 16%) */
+    --ring: 45 100% 50%; /* hsl(45, 100%, 50%) */
+    --chart-1: 45 100% 50%; /* hsl(45, 100%, 50%) */
+    --chart-2: 45 80% 60%; /* hsl(45, 80%, 60%) */
+    --chart-3: 45 60% 70%; /* hsl(45, 60%, 70%) */
+    --chart-4: 220 40% 40%; /* hsl(220, 40%, 40%) */
+    --chart-5: 220 60% 60%; /* hsl(220, 60%, 60%) */
+    --radius: 0.5rem; /* 8px */
+  }
+}
+
+@layer base {
+  img {
+    @apply select-none;
+  }
+
+  /* Chrome, Safari, Edge, Opera */
+  input::-webkit-outer-spin-button,
+  input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  /* Firefox */
+  input[type="number"] {
+    -moz-appearance: textfield;
+  }
+
+  input:-webkit-autofill,
+  input:-webkit-autofill:hover,
+  input:-webkit-autofill:focus,
+  input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px theme("colors.primary.DEFAULT") inset !important;
+  }
+
+  ::-webkit-scrollbar {
+    @apply w-[6px] transition-all;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply rounded-md bg-[theme('colors.muted.foreground')] transition-all;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+}

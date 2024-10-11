@@ -1,0 +1,144 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["fullTextSearch", "omitApi"]
+}
+
+datasource db {
+  provider = "postgres"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  MEMBER
+}
+
+enum OrderStatus {
+  PAID
+}
+
+model User {
+  id          String   @id @default(cuid()) @db.VarChar(30)
+  phone       String   @unique @db.VarChar(18)
+  password    String   @db.VarChar(255)
+  name        String   @db.VarChar(50)
+  email       String   @unique @db.VarChar(255)
+  is_verified Boolean  @default(false)
+  role        UserRole @default(MEMBER)
+  photo_url   String?  @db.VarChar(255)
+
+  cart_items CartItem[]
+  orders     Order[]
+  Otp        Otp?
+
+  @@index([id], type: Hash)
+  @@map("users")
+}
+
+model Grade {
+  id          String @id @default(cuid()) @db.VarChar(30)
+  name        String @db.VarChar(50)
+  description String @db.VarChar(255)
+
+  umrah_packages UmrahPackage[]
+
+  @@index([id], type: Hash)
+  @@map("grades")
+}
+
+model Ustadz {
+  id          String   @id @default(cuid()) @db.VarChar(30)
+  name        String   @db.VarChar(255)
+  description String   @db.Text
+  created_at  DateTime @default(now()) @db.Timestamp()
+  updated_at  DateTime @updatedAt @db.Timestamp
+
+  umrah_packages UmrahPackage[]
+
+  @@index([id], type: Hash)
+  @@map("ustadzs")
+}
+
+model UmrahPackage {
+  id          String   @id @default(cuid()) @db.VarChar(30)
+  ustadz_id   String   @db.VarChar(30)
+  grade_id    String   @db.VarChar(30)
+  name        String   @db.VarChar(255)
+  description String   @db.Text
+  price       Int      @db.Integer
+  photo_urls  String   @db.Text
+  video_urls  String   @db.Text
+  created_at  DateTime @default(now()) @db.Timestamp()
+  updated_at  DateTime @updatedAt @db.Timestamp
+
+  ustadz Ustadz @relation(fields: [ustadz_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  grade  Grade  @relation(fields: [grade_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  cart_items  CartItem[]
+  order_items OrderItem[]
+
+  @@index([id], type: Hash)
+  @@map("umrah_packages")
+}
+
+model CartItem {
+  id               String   @id @default(cuid()) @db.VarChar(30)
+  user_id          String   @db.VarChar(30)
+  umrah_package_id String   @db.VarChar(30)
+  quantity         Int      @default(1)
+  total_price      Int      @db.Integer
+  created_at       DateTime @default(now()) @db.Timestamp()
+  updated_at       DateTime @updatedAt @db.Timestamp
+
+  user          User         @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  umrah_package UmrahPackage @relation(fields: [umrah_package_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([id], type: Hash)
+  @@map("cart_items")
+}
+
+model Order {
+  id          String      @id @default(cuid()) @db.VarChar(30)
+  user_id     String      @db.VarChar(30)
+  total_price Int         @db.Integer
+  status      OrderStatus @default(PAID)
+  created_at  DateTime    @default(now()) @db.Timestamp()
+  updated_at  DateTime    @updatedAt @db.Timestamp
+
+  user        User        @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  order_items OrderItem[]
+
+  @@index([id], type: Hash)
+  @@map("orders")
+}
+
+model OrderItem {
+  id               String @id @default(cuid()) @db.VarChar(30)
+  order_id         String @db.VarChar(30)
+  umrah_package_id String @db.VarChar(30)
+  total_price      Int    @db.Integer
+  quantity         Int    @default(1)
+
+  order         Order        @relation(fields: [order_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  umrah_package UmrahPackage @relation(fields: [umrah_package_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([id], type: Hash)
+  @@map("order_items")
+}
+
+model Otp {
+  id      Int    @id @default(autoincrement())
+  user_id String @unique @db.VarChar(30)
+  otp     String
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([id], type: Hash)
+  @@map("otps")
+}
